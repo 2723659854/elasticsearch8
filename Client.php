@@ -258,7 +258,7 @@ class Client
         }
         $params = [
             'index' => $this->table,
-            'id'    => $id
+            'id' => $id
         ];
         $this->clearLastQueryCondition();
         return $this->client->get($params);
@@ -286,8 +286,8 @@ class Client
         }
         $params = [
             'index' => $this->table,
-            'id'    => $id,
-            'body'  => [
+            'id' => $id,
+            'body' => [
                 'doc' => $data
             ]
         ];
@@ -300,7 +300,8 @@ class Client
      * @param string $id 索引id
      * @return array|callable
      */
-    public function deleteById(string $id){
+    public function deleteById(string $id)
+    {
         if (empty($this->table)) {
             throw new \InvalidArgumentException('Table name cannot be empty');
         }
@@ -309,11 +310,12 @@ class Client
         }
         $params = [
             'index' => $this->table,
-            'id'    => $id
+            'id' => $id
         ];
         $this->clearLastQueryCondition();
         return $this->client->delete($params);
     }
+
     /** 搜索条件 */
     protected $where = [];
 
@@ -326,8 +328,9 @@ class Client
      * @param mixed $value = 'abc'
      * @return $this
      * @note 放入到must查询中
+     * @note 查询条件可能是三个字符的场景
      */
-    public function where(string $key,$value)
+    public function where(string $key, $value)
     {
         $this->where[$key] = $value;
 
@@ -343,16 +346,16 @@ class Client
         if (empty($this->where)) {
             $params = [
                 'index' => $this->table,
-                'body'  => [
+                'body' => [
                     'query' => [
                         'matchAll' => new stdClass(),
                     ]
                 ]
             ];
-        }else{
+        } else {
             $params = [
                 'index' => $this->table,
-                'body'  => [
+                'body' => [
                     'query' => [
                         'match' => $this->where,
                     ]
@@ -362,18 +365,18 @@ class Client
 
         $params = [
             'index' => 'my_index',
-            'body'  => [
+            'body' => [
                 'query' => [
                     'bool' => [
                         /** 精确筛选，就是必须满足当前条件 */
                         'filter' => [
                             /** term 精确查询，必须等于abc才算满足 */
-                            'term' => [ 'testField' => 'abc' ]
+                            'term' => ['testField' => 'abc']
                         ],
                         /** 或者筛选 or 查询  */
                         'should' => [
                             /** match 模糊匹配，只要age包含52就算满足 */
-                            'match' => [ 'age' => 52 ]
+                            'match' => ['age' => 52]
                         ]
                     ]
                 ]
@@ -381,8 +384,8 @@ class Client
         ];
 
         $params = [
-            'index' =>'my_index',
-            'body'  => [
+            'index' => 'my_index',
+            'body' => [
                 'query' => [
                     'bool' => [
                         // 必须满足的条件（相当于AND逻辑），这里尝试精确匹配username为张三
@@ -408,12 +411,27 @@ class Client
 
 
         /** 构建where条件 */
-        $condition = [];
+        $params = [
+            'index' => 'my_index',
+            'body' => [
+                'query' => []
+            ]
+        ];
+
+        /** 构建must部分 */
+        if (!empty($this->where)) {
+            foreach ($this->where as $key => $value) {
+                $params['body']['query']['bool']['must']['match'][$key] = $value;
+            }
+        }
+        /** 构建should查询部分 */
+        if (!empty($this->orWhere)) {
+
+        }
 
 
         return $this->client->search($params);
     }
-
 
 
     /** 或者查询 */
@@ -425,7 +443,8 @@ class Client
      * @param mixed $value
      * @return $this
      */
-    public function whereOr(string $key,$value){
+    public function whereOr(string $key, $value)
+    {
         $this->orWhere[$key] = $value;
         return $this;
     }
@@ -439,7 +458,7 @@ class Client
      * @param mixed $value
      * @return $this
      */
-    public function filter(string $key,$value)
+    public function filter(string $key, $value)
     {
         $this->filterWhere[$key] = $value;
         return $this;
@@ -457,7 +476,7 @@ class Client
      * @param int $pageSize 每页条数
      * @return $this
      */
-    public function page(int $page= 1, int $pageSize = 50)
+    public function page(int $page = 1, int $pageSize = 50)
     {
         $this->page = $page;
         $this->pageSize = $pageSize;
