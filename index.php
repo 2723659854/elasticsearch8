@@ -44,11 +44,11 @@ $params = [
 ];
 
 /** 更新表结构 */
-//$response =$client->indices()->putMapping($params);
+$response =$client->indices()->putMapping($params);
 
 // Get mappings for all indices
 /** 获取所有的表结构 */
-//$response = $client->indices()->getMapping();
+$response = $client->indices()->getMapping();
 //var_dump($response);
 /** 获取制定表的结构 */
 // Get mappings in 'my_index'
@@ -264,5 +264,33 @@ $params = [
     'from' => 0,
     'size' => 10
 ];
-$result = $client->search($params);
-var_dump($result);
+//$result = $client->search($params);
+//var_dump($result);
+/** 创建表结构 */
+$client = ClientBuilder::create()->build();
+$params = [
+    'index' => 'my_index',
+    'body' => [
+        'settings' => [
+            'number_of_shards' => 3,
+            'number_of_replicas' => 2
+        ],
+        'mappings' => [
+            '_source' => [
+                'enabled' => true
+            ],
+            'properties' => [
+                'first_name' => [
+                    'type' => 'keyword'
+                ],
+                'age' => [
+                    'type' => 'integer'
+                ]
+            ]
+        ]
+    ]
+];
+
+
+// Create the index with mappings and settings now
+$response = $client->indices()->create($params);
