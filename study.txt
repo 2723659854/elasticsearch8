@@ -1,0 +1,13 @@
+# 创建默认的网络桥接
+docker network create default_network
+# 创建网络
+docker network create shared_network
+# 将Elasticsearch容器加入网络（假设容器名为my-es，根据实际修改）
+docker network connect shared_network my-es
+# 将PHP容器加入网络（假设容器名为your_php_container_name，根据实际修改）
+docker network connect shared_network your_php_container_name
+
+# 创建elasticsearch服务， 用户名是elastic ，密码是123456
+docker run -d --name my-es -p 9201:9200 -p 9301:9300 -e "discovery.type=single-node" -e "ELASTIC_PASSWORD=123456" -e "xpack.security.enabled=true" elasticsearch:8.15.5
+
+# ok
