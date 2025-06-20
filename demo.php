@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/Client.php';
 
-$client = new Client(['127.0.0.1:9201'],'elastic', '123456');
+$client = new Client(['127.0.0.1:9200'],'elastic', '123456');
 //$result = $client->deleteIndex('my_index');
 /** 创建表 */
 $result = $client->createTable('my_index',  [
