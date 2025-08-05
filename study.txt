@@ -11,3 +11,8 @@ docker network connect shared_network your_php_container_name
 docker run -d --name my-es -p 9201:9200 -p 9301:9300 -e "discovery.type=single-node" -e "ELASTIC_PASSWORD=123456" -e "xpack.security.enabled=true" elasticsearch:8.15.5
 
 # ok
+
+# Created elasticsearch keystore in /usr/share/elasticsearch/config/elasticsearch.keystore
+# ERROR: Elasticsearch died while starting up, with exit code 137
+# 这个报错是内存不足
+# docker run -d --name my-es -p 9210:9200 -p 9310:9300 -e "discovery.type=single-node" -e "ELASTIC_PASSWORD=3031067bec06de8f" -e "xpack.security.enabled=true" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --memory=1g elasticsearch:8.15.5
